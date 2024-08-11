@@ -68,9 +68,17 @@ class ChoiceSetMode(Enum):
     EXPANDED = "expanded"
     FILTERED = "filtered"
 
-class InputChoice(MaterialMapping):
-    def __init__(self, __title: str, __value: Optional[str]=None):
-        super().__init__(title=__title, value=__value or __title)
+class InputChoice(AdaptiveCardMaterial):
+    def __init__(self, __title: str, value: Optional[str]=None):
+        super().__init__(
+            MaterialType.INPUT_CHOICE,
+            title=__title, 
+            value=value or __title
+        )
+
+    @staticmethod
+    def empty() -> InputChoice:
+        return InputChoice("")
 
 class InputChoiceSet(AdaptiveCardInput):
     def __init__(

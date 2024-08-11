@@ -1,4 +1,4 @@
-![](https://img.shields.io/badge/build-v1.3.1-green.svg) ![](https://img.shields.io/badge/python-3.7_|_3.8_|_3.9_|_3.10_|_3.11_|_3.12-yellow.svg)
+![](https://img.shields.io/badge/build-v1.3.2-green.svg) ![](https://img.shields.io/badge/python-3.7_|_3.8_|_3.9_|_3.10_|_3.11_|_3.12-yellow.svg)
 
 # Adaptive Cards Framework
 ## Baseline
