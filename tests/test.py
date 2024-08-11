@@ -1,42 +1,58 @@
 from adaptive_cards import *
 
-my_adaptive_card = AdaptiveCard(
+import json
+
+official_example = AdaptiveCard(
+    version=1.5,
+    schema="http://adaptivecards.io/schemas/adaptive-card.json",
     body=[
-        TextBlock(
-            "This is supposed to be a title",
-            style=TextStyle(
-                theme=TextTheme.HEADING
-            )
-        ),
-        Container(
-            items=[
-                TextBlock(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                )
-            ],
-            style=ContainerStyle(
-                theme=ContainerTheme.EMPHASIS
-            )
-        ),
-        ActionSet(
-            actions=[
-                ActionSubmit(
-                    "I get it", 
-                    data=ActionData(
-                        msteams=MSTeams.message_back(text="they get it")
-                    )
+        TextBlock("${title}", style=TextStyle(size=TextSize.MEDIUM, weight=FontWeight.BOLDER)),
+        ColumnSet(
+            columns=[
+                Column(
+                    layout=ColumnLayout(width=ColumnWidth.AUTO),
+                    items=[
+                        Image(
+                            "${creator.profileImage}",
+                            style=ImageStyle(theme=ImageTheme.PERSON),
+                            layout=ImageLayout(size=ImageSize.SMALL),
+                            alternate_text="${creator.name}"
+                        )
+                    ]
                 ),
-                ActionSubmit("I don't", 
-                    data=ActionData(
-                        msteams=MSTeams.message_back(text="they do not get it")
-                    )
+                Column(
+                    items=[
+                        TextBlock("${creator.name}", style=TextStyle(weight=FontWeight.BOLDER)),
+                        TextBlock(
+                            "Created {{DATE(${createdUtc},SHORT)}}", 
+                            style=TextStyle(subtle=True),
+                            layout=TextLayout(spacing=MaterialSpacing.NONE)
+                        )
+                    ]
                 )
-            ],
-            layout=ActionSetLayout(
-                horizontal_alighment=HorizontalAlignment.RIGHT
-            )
+            ]
+        ),
+        TextBlock("${description}"),
+        FactSet(
+            facts=[
+                Fact(title="${key}:", value="${value}").using("${properties}"),
+            ]
         )
+    ],
+    actions=[
+        ActionShowCard(
+            title="Set due date",
+            card=AdaptiveCard(
+                schema="http://adaptivecards.io/schemas/adaptive-card.json",
+                body=[
+                    InputDate(id="dueDate"),
+                    InputText(id="comment", placeholder="Add a comment", multiline=True)
+                ],
+                actions=[ActionSubmit(title="OK")]
+            )
+        ),
+        ActionOpenUrl(title="View", url="${viewUrl}")
     ]
 )
 
-print(my_adaptive_card)
+print(json.dumps(official_example.__dict__, indent=4))

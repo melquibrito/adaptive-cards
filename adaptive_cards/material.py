@@ -26,6 +26,7 @@ class MaterialType(Enum):
     ACTION_SHOW_CARD = "Action.ShowCard"
     ACTION_TOGGLE_VISIBILITY = "Action.ToggleVisibility"
     ACTION_EXECUTE = "Action.Execute"
+    TARGET_ELEMENT = "TargetElement"
     INPUT_TEXT = "Input.Text"
     INPUT_DATE = "Input.Date"
     INPUT_TIME = "Input.Time"
@@ -256,6 +257,14 @@ class AdaptiveCardMaterial(Material, ABC):
                     del self.__data[key]
             else:
                 self.__data[key] = value
+    
+    def using(self, __data) -> AdaptiveCardMaterial:
+        self.__data["$data"] = __data
+        return self
+
+    def when(self, __condition: str) -> AdaptiveCardMaterial:
+        self.__data["$when"] = __condition
+        return self
     
     @staticmethod
     @abstractmethod

@@ -129,21 +129,26 @@ class ActionShowCard(AdaptiveCardAction):
         )
     
     @staticmethod
-    def empty() ->ActionShowCard:
+    def empty() -> ActionShowCard:
         return ActionShowCard(title="", card=AdaptiveCard.empty())
 
-class Freezing(Enum):
+class TargetFreezing(Enum):
     NONE = None
     VISIBILITY = True
     INVISIBIITY = False
 
-class TargetElement(MaterialMapping):
-    def __init__(self, __id: str, freeze: Freezing=Freezing.NONE):
+class TargetElement(AdaptiveCardMaterial):
+    def __init__(self, __id: str, freeze: TargetFreezing=TargetFreezing.NONE):
 
         super().__init__(
+            MaterialType.TARGET_ELEMENT,
             elementId=__id, 
             isVisible=freeze
         )
+    
+    @staticmethod
+    def empty() -> TargetElement:
+        return TargetElement("")
 
 class ActionToggleVisibility(AdaptiveCardAction):
     def __init__(
@@ -255,7 +260,7 @@ __all__ = [
     'ActionSubmit', 
     'ActionOpenUrl', 
     'ActionShowCard', 
-    'Freezing', 
+    'TargetFreezing', 
     'TargetElement', 
     'ActionToggleVisibility', 
     'ActionExecute', 

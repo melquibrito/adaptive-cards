@@ -184,9 +184,13 @@ class FactSetLayout(MaterialMapping):
             height=height
         )
 
-class Fact(MaterialMapping):
+class Fact(AdaptiveCardMaterial):
     def __init__(self, title: str, value: str):
-        super().__init__(title=title, value=value)
+        super().__init__(MaterialType.FACT, title=title, value=value)
+    
+    @staticmethod
+    def empty() -> Fact:
+        return Fact("", "")
 
 class FactSet(AdaptiveCardMaterial):
     def __init__(
