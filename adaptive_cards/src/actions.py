@@ -1,47 +1,78 @@
 from __future__ import annotations
+from typing import List, Optional
+from enum import Enum
+
 from .material import *
-from typing import List
 from .adaptive_card import AdaptiveCard
 
-class AssociatedInput(Enum):
+class MSTeams(MaterialMapping):
+    def __init__(self, __type: str, **kwargs):
+        super().__init__(type=__type, **kwargs)
+
+    @staticmethod
+    def message_back(text: str, value: Optional[str]=None, display_text: Optional[str]=None):
+        return MSTeams("messageBack", text=text, value=value, displayText=display_text)
+
+    @staticmethod
+    def im_back(value: str):
+        return MSTeams("imBack", value=value)
+    
+    @staticmethod
+    def invoke(action: str, value: Optional[dict | str]=None):
+        return MSTeams(action, value=value)
+    
+    @staticmethod
+    def sign_in(url: str):
+        return MSTeams("signin", value=url)
+
+class ActionData(MaterialMapping):
+    def __init__(
+            self, 
+            msteams: Optional[MSTeams]=None,
+            **kwargs
+        ):
+
+        super().__init__(msteams=msteams, **kwargs)
+
+class AssociatedInputs(Enum):
     AUTO = "auto"
     NONE = "none"
 
-class Submit(AdaptiveCardAction):
+class ActionSubmit(AdaptiveCardAction):
     def __init__(
             self, 
             title: str, 
             tooltip: Optional[str]=None,
             enabled: bool=True,
             icon_url: Optional[str]=None, 
-            data: Optional[dict | str]=None,
+            data: Optional[ActionData | dict | str]=None,
             mode: ActionMode=ActionMode.UNSET,
             theme: ActionTheme=ActionTheme.UNSET,
             role: ActionRole=ActionRole.UNSET,
-            associated_inputs: AssociatedInput=AssociatedInput.AUTO,
+            associated_inputs: AssociatedInputs=AssociatedInputs.AUTO,
             auto_disable: bool=False,
             id: Optional[str]=None):
         
         super().__init__(
-            ActionTypes.SUBMIT,
+            ActionType.SUBMIT,
             title=title,
             tooltip=tooltip,
             enabled=enabled,
             mode=mode,
             role=role,
             icon_url=icon_url,
-            style=theme,
+            theme=theme,
             id=id,
             data=data,
             associatedInputs=associated_inputs,
-            disabledUnlessAssociatedInputsChange=auto_disable or None
+            disabledUnlessAssociatedInputssChange=auto_disable or None
         )
     
     @staticmethod
-    def empty() -> Submit:
-        return Submit(title="")
+    def empty() -> ActionSubmit:
+        return ActionSubmit(title="")
     
-class OpenUrl(AdaptiveCardAction):
+class ActionOpenUrl(AdaptiveCardAction):
     def __init__(
             self, 
             title: str, 
@@ -55,23 +86,23 @@ class OpenUrl(AdaptiveCardAction):
             id: Optional[str]=None):
 
         super().__init__(
-            ActionTypes.OPEN_URL,
+            ActionType.OPEN_URL,
             title=title,
             tooltip=tooltip,
             enabled=enabled,
             mode=mode,
             icon_url=icon_url,
-            style=theme,
+            theme=theme,
             role=role,
             id=id,
             url=url
         )
     
     @staticmethod
-    def empty() -> OpenUrl:
-        return OpenUrl(title="", url="")
+    def empty() -> ActionOpenUrl:
+        return ActionOpenUrl(title="", url="")
 
-class ShowCard(AdaptiveCardAction):
+class ActionShowCard(AdaptiveCardAction):
     def __init__(
             self, 
             title: str, 
@@ -85,21 +116,21 @@ class ShowCard(AdaptiveCardAction):
             id: Optional[str]=None):
 
         super().__init__(
-            ActionTypes.SHOW_CARD,
+            ActionType.SHOW_CARD,
             title=title,
             tooltip=tooltip,
             enabled=enabled,
             mode=mode,
             icon_url=icon_url,
-            style=theme,
+            theme=theme,
             role=role,
             id=id,
             card=card
         )
     
     @staticmethod
-    def empty() -> ShowCard:
-        return ShowCard(title="", card=AdaptiveCard.empty())
+    def empty() ->ActionShowCard:
+        return ActionShowCard(title="", card=AdaptiveCard.empty())
 
 class Freezing(Enum):
     NONE = None
@@ -114,7 +145,7 @@ class TargetElement(MaterialMapping):
             isVisible=freeze
         )
 
-class ToggleVisibility(AdaptiveCardAction):
+class ActionToggleVisibility(AdaptiveCardAction):
     def __init__(
             self, 
             title: str, 
@@ -127,26 +158,26 @@ class ToggleVisibility(AdaptiveCardAction):
             icon_url: Optional[str]=None, 
             id: Optional[str]=None):
 
-        super().ensure_iterable_typing(target_element_ids, str, TargetElement)
+        self.ensure_iterable_typing(target_element_ids, str, TargetElement)
         
         super().__init__(
-            ActionTypes.TOGGLE_VISIBILITY,
+            ActionType.TOGGLE_VISIBILITY,
             title=title,
             tooltip=tooltip,
             enabled=enabled,
             mode=mode,
             icon_url=icon_url,
-            style=theme,
+            theme=theme,
             role=role,
             id=id,
             targetElements=target_element_ids
         )
     
     @staticmethod
-    def empty() -> ToggleVisibility:
-        return ToggleVisibility(title="", target_element_ids=[])
+    def empty() -> ActionToggleVisibility:
+        return ActionToggleVisibility(title="", target_element_ids=[])
 
-class Execute(AdaptiveCardAction):
+class ActionExecute(AdaptiveCardAction):
     def __init__(
             self, 
             title: str, 
@@ -158,29 +189,29 @@ class Execute(AdaptiveCardAction):
             mode: ActionMode=ActionMode.UNSET,
             theme: ActionTheme=ActionTheme.UNSET,
             role: ActionRole=ActionRole.UNSET,
-            associated_inputs: AssociatedInput=AssociatedInput.AUTO,
+            associated_inputs: AssociatedInputs=AssociatedInputs.AUTO,
             auto_disable: bool=False,
             id: Optional[str]=None):
         
         super().__init__(
-            ActionTypes.EXECUTE,
+            ActionType.EXECUTE,
             title=title,
             tooltip=tooltip,
             enabled=enabled,
             mode=mode,
-            style=theme,
+            theme=theme,
             icon_url=icon_url,
             role=role,
             id=id,
             verb=verb,
             data=data,
             associatedInputs=associated_inputs,
-            disabledUnlessAssociatedInputsChange=auto_disable or None
+            disabledUnlessAssociatedInputssChange=auto_disable or None
         )
     
     @staticmethod
-    def empty() -> Execute:
-        return Execute(title="")
+    def empty() -> ActionExecute:
+        return ActionExecute(title="")
 
 class ActionSetLayout(MaterialMapping):
     def __init__(
@@ -200,21 +231,36 @@ class ActionSetLayout(MaterialMapping):
 class ActionSet(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__actions: AdaptiveCardAction,
+            actions: List[AdaptiveCardAction]=[],
             layout: Optional[ActionSetLayout]=None,
             visible: bool=True,
             id: Optional[str]=None):
         
-        super().ensure_iterable_typing(__actions, AdaptiveCardAction)
+        self.ensure_iterable_typing(actions, AdaptiveCardAction)
         
         super().__init__(
             MaterialType.ACTION_SET, 
             id=id, 
             visible=visible, 
-            actions=__actions, 
+            actions=actions, 
             **layout or {}
         )
     
     @staticmethod
     def empty() -> ActionSet:
         return ActionSet()
+    
+__all__ = [
+    'AssociatedInputs', 
+    'ActionSubmit', 
+    'ActionOpenUrl', 
+    'ActionShowCard', 
+    'Freezing', 
+    'TargetElement', 
+    'ActionToggleVisibility', 
+    'ActionExecute', 
+    'ActionSetLayout', 
+    'ActionSet',
+    'MSTeams',
+    'ActionData'
+]

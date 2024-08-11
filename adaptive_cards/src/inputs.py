@@ -1,6 +1,10 @@
 from __future__ import annotations
-from .material import *
+from typing import List, Optional, Any
+from abc import ABC, abstractmethod
 from datetime import date, time
+from enum import Enum
+
+from .material import *
 
 class InputValidation(MaterialMapping):
     def __init__(
@@ -27,10 +31,10 @@ class InputLayout(MaterialMapping):
             height=height
         )
 
-class AdaptiveCardInput(AdaptiveCardMaterial):
+class AdaptiveCardInput(AdaptiveCardMaterial, ABC):
     def __init__(
             self,
-            __type: InputTypes,
+            __type: InputType,
             id: str,
             label: Optional[str]=None,
             value: Optional[Any]=None,
@@ -65,15 +69,15 @@ class ChoiceSetMode(Enum):
     FILTERED = "filtered"
 
 class InputChoice(MaterialMapping):
-    def __init__(self, title: str, value: str):
-        super().__init__(title=title, value=value)
+    def __init__(self, __title: str, __value: Optional[str]=None):
+        super().__init__(title=__title, value=__value or __title)
 
 class InputChoiceSet(AdaptiveCardInput):
     def __init__(
             self,
             id: str,
-            label: str,
-            choices: List[InputChoice],
+            choices: List[InputChoice]=[],
+            label: Optional[str]=None,
             placeholder: Optional[str]=None,
             value: Optional[str]=None,
             mode: ChoiceSetMode=ChoiceSetMode.UNSET,
@@ -83,13 +87,13 @@ class InputChoiceSet(AdaptiveCardInput):
             wrap: bool=False,
             visible: bool=True):
         
-        super().ensure_iterable_typing(choices, InputChoice)
+        self.ensure_iterable_typing(choices, InputChoice)
 
         if isinstance(value, InputChoice):
             value = value.get("title") if mode is ChoiceSetMode.FILTERED and not enable_multi_selection else value.get("value")
         
         super().__init__(
-            InputTypes.CHOICE_SET,
+            InputType.CHOICE_SET,
             id=id,
             label=label,
             value=value,
@@ -132,7 +136,7 @@ class InputText(AdaptiveCardInput):
     def __init__(
             self,
             id: str,
-            label: str,
+            label: Optional[str]=None,
             placeholder: Optional[str]=None,
             value: Optional[str]=None,
             multiline: bool=False,
@@ -144,7 +148,7 @@ class InputText(AdaptiveCardInput):
             visible: bool=True):
         
         super().__init__(
-            InputTypes.TEXT,
+            InputType.TEXT,
             id=id,
             label=label,
             value=value,
@@ -166,7 +170,7 @@ class InputNumber(AdaptiveCardInput):
     def __init__(
             self,
             id: str,
-            label: str,
+            label: Optional[str]=None,
             placeholder: Optional[str]=None,
             value: Optional[int]=None,
             minimum_value: Optional[int]=None,
@@ -176,7 +180,7 @@ class InputNumber(AdaptiveCardInput):
             visible: bool=True,  
         ):
         super().__init__(
-            InputTypes.NUMBER,
+            InputType.NUMBER,
             id=id,
             label=label,
             value=value,
@@ -196,7 +200,7 @@ class InputDate(AdaptiveCardInput):
     def __init__(
             self,
             id: str,
-            label: str,
+            label: Optional[str]=None,
             placeholder: Optional[str]=None,
             value: Optional[date]=None,
             minimum_value: Optional[date]=None,
@@ -206,7 +210,7 @@ class InputDate(AdaptiveCardInput):
             visible: bool=True,
         ):
         super().__init__(
-            InputTypes.DATE,
+            InputType.DATE,
             id=id,
             label=label,
             value=value.isoformat() if value else None,
@@ -226,7 +230,7 @@ class InputTime(AdaptiveCardInput):
     def __init__(
             self,
             id: str,
-            label: str,
+            label: Optional[str]=None,
             placeholder: Optional[str]=None,
             value: Optional[time]=None,
             minimum_value: Optional[time]=None,
@@ -236,7 +240,7 @@ class InputTime(AdaptiveCardInput):
             visible: bool=True,
         ):
         super().__init__(
-            InputTypes.DATE,
+            InputType.DATE,
             id=id,
             label=label,
             value=value.strftime("%H:%M") if value else None,
@@ -266,7 +270,7 @@ class InputToggle(AdaptiveCardInput):
             visible: bool=True,
         ):
         super().__init__(
-            InputTypes.DATE,
+            InputType.TOGGLE,
             id=id,
             label=label,
             value=value,
@@ -281,3 +285,19 @@ class InputToggle(AdaptiveCardInput):
     @staticmethod
     def empty() -> InputToggle:
         return InputToggle(id="", title="")
+    
+__all__ = [
+    'InputValidation',
+    'InputLayout',
+    'AdaptiveCardInput',
+    'ChoiceSetMode',
+    'InputChoice',
+    'InputChoiceSet',
+    'InputTextValidation',
+    'InputTextMode',
+    'InputText',
+    'InputNumber',
+    'InputDate',
+    'InputTime',
+    'InputToggle'
+]

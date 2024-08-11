@@ -1,7 +1,10 @@
 from __future__ import annotations
+from typing import List, Optional
+from enum import Enum
+
 from .material import *
 from .actions import AdaptiveCardAction
-from .elements import Image, ImageSizes
+from .elements import Image, ImageSize
 
 class ContainerTheme(Enum):
     UNSET = None
@@ -44,7 +47,7 @@ class ContainerLayout(MaterialMapping):
 class Container(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__items: AdaptiveCardMaterial,
+            items: List[AdaptiveCardMaterial]=[],
             layout: Optional[ContainerLayout]=None,
             style: Optional[ContainerStyle]=None,
             action: Optional[AdaptiveCardAction]=None,
@@ -52,13 +55,13 @@ class Container(AdaptiveCardMaterial):
             visible: bool=True,
             id: Optional[str]=None):
         
-        super().ensure_iterable_typing(__items)
+        self.ensure_iterable_typing(items)
 
         super().__init__(
             MaterialType.CONTAINER,
             id=id,
             visible=visible,
-            items=__items,
+            items=items,
             selectAction=action,
             **background_image or {},
             **layout or {},
@@ -100,7 +103,7 @@ class ColumnLayout(MaterialMapping):
 class Column(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__items: AdaptiveCardMaterial,
+            items: List[AdaptiveCardMaterial]=[],
             layout: Optional[ColumnLayout]=None,
             style: Optional[ContainerStyle]=None,
             background_image: Optional[BackgroundImage]=None,
@@ -108,13 +111,13 @@ class Column(AdaptiveCardMaterial):
             visible: bool=True,
             id: Optional[str]=None):
         
-        super().ensure_iterable_typing(__items)
+        self.ensure_iterable_typing(items)
 
         super().__init__(
             MaterialType.COLUMN,
             id=id,
             visible=visible,
-            items=__items,
+            items=items,
             selectAction=action,
             **background_image or {},
             **layout or {},
@@ -145,20 +148,20 @@ class ColumnSetLayout(MaterialMapping):
 class ColumnSet(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__columns: Column,
+            columns: List[Column],
             layout: Optional[ColumnSetLayout]=None,
             style: Optional[ContainerStyle]=None,
             action: Optional[AdaptiveCardAction]=None,
             visible: bool=True,
             id: Optional[str]=None):
         
-        super().ensure_iterable_typing(__columns, Column)
+        self.ensure_iterable_typing(columns, Column)
 
         super().__init__(
             MaterialType.COLUMN_SET,
             id=id,
             visible=visible,
-            columns=__columns,
+            columns=columns,
             selectAction=action,
             **layout or {},
             **style or {}        
@@ -188,18 +191,18 @@ class Fact(MaterialMapping):
 class FactSet(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__facts: Fact,
+            facts: List[Fact]=[],
             layout: Optional[FactSetLayout]=None,
             visible: bool=True,
             id: Optional[str]=None):
         
-        super().ensure_iterable_typing(__facts, Fact)
+        self.ensure_iterable_typing(facts, Fact)
 
         super().__init__(
             MaterialType.FACT_SET,
             id=id,
             visible=visible,
-            facts=__facts,
+            facts=facts,
             **layout or {}
         )
     
@@ -225,19 +228,19 @@ class ImageSetLayout(MaterialMapping):
 class ImageSet(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__images: Image,
+            images: List[Image]=[],
             layout: Optional[ImageSetLayout]=None,
-            image_size: ImageSizes=ImageSizes.UNSET,
+            image_size: ImageSize=ImageSize.UNSET,
             visible: bool=True,
             id: Optional[str]=None):
         
-        super().ensure_iterable_typing(__images, Image)
+        self.ensure_iterable_typing(images, Image)
 
         super().__init__(
             MaterialType.IMAGE_SET,
             id=id,
             visible=visible,
-            images=__images,
+            images=images,
             imageSize=image_size,
             **layout or {}
         )
@@ -268,7 +271,7 @@ class TableLayout(MaterialMapping):
 class TableCell(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__items: AdaptiveCardMaterial,
+            items: List[AdaptiveCardMaterial]=[],
             layout: Optional[ContainerLayout]=None,
             style: Optional[ContainerStyle]=None,
             action: Optional[AdaptiveCardAction]=None,
@@ -276,13 +279,13 @@ class TableCell(AdaptiveCardMaterial):
             visible: bool=True,
             id: Optional[str]=None):
         
-        super().ensure_iterable_typing(__items)
+        self.ensure_iterable_typing(items)
 
         super().__init__(
             MaterialType.TABLE_CELL,
             id=id,
             visible=visible,
-            items=__items,
+            items=items,
             selectAction=action,
             **background_image or {},
             **layout or {},
@@ -296,19 +299,19 @@ class TableCell(AdaptiveCardMaterial):
 class TableRow(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__cells: TableCell,
+            cells: List[TableCell]=[],
             layout: Optional[TableLayout]=None,
             theme: ContainerTheme=ContainerTheme.UNSET,
             visible: bool=True,
             id: Optional[str]=None):
 
-        super().ensure_iterable_typing(__cells, TableCell)
+        self.ensure_iterable_typing(cells, TableCell)
 
         super().__init__(
             MaterialType.TABLE_ROW,
             id=id,
             visible=visible,
-            cells=__cells,
+            cells=cells,
             style=theme,
             **layout or {}
         )
@@ -331,7 +334,7 @@ class GridStyle(MaterialMapping):
 class Table(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__rows: TableRow,
+            rows: List[TableRow]=[],
             columns: Optional[List[Weight | Pixels] | int]=None,
             layout: Optional[TableLayout]=None,
             style: Optional[GridStyle]=None,
@@ -339,8 +342,10 @@ class Table(AdaptiveCardMaterial):
             visible: bool=True,
             id: Optional[str]=None):
 
+        self.ensure_iterable_typing(rows, TableRow)
+
         if columns is None:
-            columns = len(max([r.get("cells") for r in __rows], key=len))
+            columns = len(max([r.get("cells") for r in rows], key=len))
 
         if isinstance(columns, int):
             columns = [dict(width=1) for _ in range(columns)]
@@ -353,7 +358,7 @@ class Table(AdaptiveCardMaterial):
             id=id,
             visible=visible,
             columns=columns,
-            rows=__rows,
+            rows=rows,
             firstRowAsHeaders=first_row_as_headers,
             **layout or {},
             **style or {}
@@ -366,7 +371,7 @@ class Table(AdaptiveCardMaterial):
 class CarouselPage(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__items: AdaptiveCardMaterial,
+            items: List[AdaptiveCardMaterial]=[],
             layout: Optional[ContainerLayout]=None,
             style: Optional[ContainerStyle]=None,
             action: Optional[AdaptiveCardAction]=None,
@@ -374,13 +379,13 @@ class CarouselPage(AdaptiveCardMaterial):
             visible: bool=True,
             id: Optional[str]=None):
         
-        super().ensure_iterable_typing(__items)
+        self.ensure_iterable_typing(items)
 
         super().__init__(
             MaterialType.CAROUSEL_PAGE,
             id=id,
             visible=visible,
-            items=__items,
+            items=items,
             selectAction=action,
             **background_image or {},
             **layout or {},
@@ -394,7 +399,7 @@ class CarouselPage(AdaptiveCardMaterial):
 class Carousel(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__pages: CarouselPage,
+            pages: List[CarouselPage]=[],
             layout: Optional[ContainerLayout]=None,
             timer: Seconds=Seconds(5000),
             initial_page: int=0,
@@ -405,7 +410,9 @@ class Carousel(AdaptiveCardMaterial):
             visible: bool=True,
             id: Optional[str]=None):
         
-        last_page = len(__pages) - 1
+        self.ensure_iterable_typing(pages, CarouselPage)
+
+        last_page = len(pages) - 1
 
         if initial_page<0:
             initial_page = 0
@@ -417,7 +424,7 @@ class Carousel(AdaptiveCardMaterial):
             MaterialType.CAROUSEL,
             id=id,
             visible=visible,
-            pages=__pages,
+            pages=pages,
             timer=timer,
             initialPage=initial_page,
             orientation=orientation,
@@ -430,3 +437,27 @@ class Carousel(AdaptiveCardMaterial):
     @staticmethod
     def empty() -> Carousel:
         return Carousel()
+    
+__all__ = [
+    'ContainerTheme',
+    'ContainerStyle',
+    'ContainerLayout',
+    'Container',
+    'ColumnWidth',
+    'ColumnLayout',
+    'Column',
+    'ColumnSetLayout',
+    'ColumnSet',
+    'FactSetLayout',
+    'Fact',
+    'FactSet',
+    'ImageSetLayout',
+    'ImageSet',
+    'TableLayout',
+    'TableCell',
+    'TableRow',
+    'GridStyle',
+    'Table',
+    'CarouselPage',
+    'Carousel'
+]

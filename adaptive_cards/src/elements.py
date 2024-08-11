@@ -1,4 +1,7 @@
 from __future__ import annotations
+from typing import List, Optional
+from enum import Enum
+
 from .material import *
 
 class TextTheme(Enum):
@@ -201,7 +204,7 @@ class MediaCaptions(MaterialMapping):
 class Media(AdaptiveCardMaterial):
     def __init__(
             self,
-            *sources: MediaSource,
+            sources: List[MediaSource]=[],
             captions: Optional[List[MediaCaptions]]=None,
             alternate_text: Optional[str]=None,
             layout: Optional[MediaLayout]=None,
@@ -224,3 +227,24 @@ class Media(AdaptiveCardMaterial):
     @staticmethod
     def empty() -> Media:
         return Media()
+
+__all__ = [
+    'TextTheme',
+    'FontType',
+    'TextSize',
+    'FontWeight',
+    'TextLayout',
+    'TextStyle',
+    'TextBlock',
+    'ImageSize',
+    'ImageLayout',
+    'ImageTheme',
+    'ImageStyle',
+    'Image',
+    'MediaLayout',
+    'MediaMimeType',
+    'CaptionMimeType',
+    'MediaSource',
+    'MediaCaptions',
+    'Media'
+]

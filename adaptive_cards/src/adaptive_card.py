@@ -1,11 +1,13 @@
 from __future__ import annotations
+from typing import List, Optional
+
 from .material import *
 
 class AdaptiveCardLayout(MaterialMapping):
     def __init__(
             self,
             minimum_height: Optional[Pixels]=None,
-            vertical_content_alignment: HorizontalAlignment=HorizontalAlignment.UNSET,
+            vertical_content_alignment: VerticalAlignment=VerticalAlignment.UNSET,
             present_right_to_left: bool=False):
                 
         super().__init__(
@@ -17,7 +19,7 @@ class AdaptiveCardLayout(MaterialMapping):
 class AdaptiveCard(AdaptiveCardMaterial):
     def __init__(
             self,
-            *__body: AdaptiveCardMaterial,
+            body: List[AdaptiveCardMaterial],
             actions: Optional[List[AdaptiveCardAction]]=None,
             select_action: Optional[AdaptiveCardAction]=None,
             layout: Optional[AdaptiveCardLayout]=None,
@@ -26,12 +28,12 @@ class AdaptiveCard(AdaptiveCardMaterial):
             schema: Optional[str]=None,
             id: Optional[str]=None):
         
-        super().ensure_iterable_typing(__body)
-        super().ensure_iterable_typing(actions, AdaptiveCardAction)
+        self.ensure_iterable_typing(body)
+        self.ensure_iterable_typing(actions, AdaptiveCardAction)
 
         super().__init__(
             MaterialType.ADAPTIVE_CARD, 
-            body=__body,
+            body=body,
             id=id, 
             version=str(version),
             selectAction=select_action,
@@ -46,3 +48,5 @@ class AdaptiveCard(AdaptiveCardMaterial):
     @staticmethod
     def empty() -> AdaptiveCard:
         return AdaptiveCard()
+
+__all__ = ['AdaptiveCardLayout', 'AdaptiveCard']
