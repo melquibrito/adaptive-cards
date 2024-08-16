@@ -8,7 +8,7 @@
 ### Why do I need a framework?
 Building an application that effectively serves Adaptive Cards can be complex and time-consuming. Without a framework, you'd need to thoroughly navigate the entire Adaptive Cards documentation to ensure proper implementation, which can slow down development and hinder scalability. While tools like the [designer.io](https://adaptivecards.io/designer/) page can assist with prototyping and creating JSON components, relying solely on these can limit your application's growth potential. By leveraging a framework, you streamline the process, allowing you to focus on crafting your cards with confidence and efficiency, without the worry of underlying technical details.
 
-## About
+## Overview
 **adaptive-cards-io** is a Python package designed to simplify the creation, manipulation, and integration of Adaptive Cards in your applications. Adaptive Cards are a powerful way to build lightweight, responsive user interfaces that seamlessly adapt to different platforms and environments. With **adaptive-cards-io**, you can efficiently generate and manage these cards, ensuring they are optimized and correctly formatted for your specific needs.
 
 This package offers a streamlined approach, allowing developers to focus on designing and deploying Adaptive Cards without getting bogged down by the intricacies of the underlying JSON structure. Whether you're building prototypes or scaling up to a production environment, **adaptive-cards-io** provides the tools and framework to enhance productivity and reduce development time.
@@ -32,109 +32,107 @@ from adaptive_cards import *
 By importing everything, all of the following will become available in your python module:
 
 #### Enumerators
-- MaterialType
+- ActionMode
+- ActionRole
+- ActionTheme
 - ActionType
+- AssociatedInputs
+- BackgroundFillMode
+- CaptionMimeType
+- ChoiceSetMode
+- ColumnWidth
+- ContainerTheme
+- FontType
+- FontWeight
+- HorizontalAlignment
+- ImageSize
+- ImageTheme
+- InputTextMode
 - InputType
 - MaterialColor
 - MaterialHeight
 - MaterialOrientation
-- HorizontalAlignment
-- VerticalAlignment
 - MaterialSpacing
-- ActionTheme
-- ActionMode
-- ActionRole
-- BackgroundFillMode
-- AssociatedInputs
-- TargetFreezing
-- ContainerTheme
-- ColumnWidth
-- TextTheme
-- FontType
-- TextSize
-- FontWeight
-- ImageSize
-- ImageTheme
+- MaterialType
 - MediaMimeType
-- CaptionMimeType
-- ChoiceSetMode
-- InputTextMode
+- TargetFreezing
+- TextSize
+- TextTheme
+- VerticalAlignment
 
 #### Building Blocks
+- AdaptiveCardAction
+- AdaptiveCardInput
+- AdaptiveCardMaterial
 - Material
 - MaterialDynamic
 - MaterialMapping
-- MaterialLayout
-- AdaptiveCardMaterial
-- BackgroundImage
-- AdaptiveCardAction
 
-#### Units
-- Weight
-- Seconds
-- Pixels
-
-#### Base
-- AdaptiveCardLayout
-- AdaptiveCard
-
-#### Actions
-- ActionSubmit
-- ActionOpenUrl
-- ActionShowCard
-- ActionToggleVisibility
-- TargetElement
+#### AdaptiveCard Material
 - ActionExecute
-- ActionSetLayout
+- ActionOpenUrl
 - ActionSet
-- MSTeams
-- ActionData
-
-#### Containers
-- ContainerStyle
-- ContainerLayout
-- Container
-- ColumnLayout
+- ActionShowCard
+- ActionSubmit
+- ActionToggleVisibility
+- AdaptiveCard
+- Carousel
+- CarouselPage
 - Column
-- ColumnSetLayout
 - ColumnSet
-- FactSetLayout
+- Container
 - Fact
 - FactSet
-- ImageSetLayout
+- Image
 - ImageSet
-- TableLayout
-- TableCell
-- TableRow
-- GridStyle
-- Table
-- CarouselPage
-- Carousel
-
-#### Inputs
-- InputValidation
-- InputLayout
-- AdaptiveCardInput
 - InputChoice
 - InputChoiceSet
-- InputTextValidation
-- InputText
-- InputNumber
 - InputDate
+- InputNumber
+- InputText
 - InputTime
 - InputToggle
-
-#### General
-- TextLayout
-- TextStyle
-- TextBlock
-- ImageLayout
-- ImageStyle
-- Image
-- MediaLayout
-- MediaSource
-- MediaCaptions
 - Media
+- MediaCaptions
+- MediaSource
+- Table
+- TableCell
+- TableRow
+- TextBlock
+
+#### Layouts
+- ActionSetLayout
+- AdaptiveCardLayout
+- ColumnLayout
+- ColumnSetLayout
+- ContainerLayout
+- FactSetLayout
+- ImageLayout
+- ImageSetLayout
+- InputLayout
+- MaterialLayout
+- MediaLayout
+- TableLayout
+- TextLayout
+
+#### Styles
+- ContainerStyle
+- GridStyle
+- ImageStyle
+- TextStyle
+
+#### Units
+- Pixels
+- Seconds
+- Weight
+
+#### Other
+- ActionData
+- BackgroundImage
+- InputTextValidation
+- InputValidation
+- MSTeams
+- TargetElement
 
 ## Example
 ```python
