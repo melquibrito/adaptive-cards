@@ -5,6 +5,7 @@ from collections.abc import Mapping
 from json import dumps
 from enum import Enum
 
+
 class MaterialType(Enum):
     ADAPTIVE_CARD = "AdaptiveCard"
     CONTAINER = "Container"
@@ -15,7 +16,6 @@ class MaterialType(Enum):
     TABLE_CELL = "TableCell"
     TEXT_BLOCK = "TextBlock"
     FACT_SET = "FactSet"
-    FACT = "Fact"
     COLUMN_SET = "ColumnSet"
     COLUMN = "Column"
     IMAGE_SET = "ImageSet"
@@ -32,7 +32,6 @@ class MaterialType(Enum):
     INPUT_TIME = "Input.Time"
     INPUT_NUMBER = "Input.Number"
     INPUT_CHOICE_SET = "Input.ChoiceSet"
-    INPUT_CHOICE = "Input.Choice"
     INPUT_TOGGLE = "Input.Toggle"
     MEDIA = "Media"
 
@@ -274,12 +273,23 @@ class AdaptiveCardMaterial(Material, ABC):
     @classmethod
     def from_dict(cls, __data: dict) -> AdaptiveCardMaterial:
         __data = __data.copy()
-        __data_type = __data.pop("type", None)
+        data_type = __data.pop("type", None)
+        data_type: MaterialType = MaterialType._value2member_map_.get(data_type)
+        
+        if cls.__name__=="AdaptiveCardMaterial":
+            subclasses = [sub.empty() for sub in AdaptiveCardMaterial.__subclasses__()]
+            subclasses = [sub for sub in subclasses if sub]
+
+            __map = {sub.type.value: sub for sub in subclasses}
+
+            __map[data_type.value].update(**__data)
+
+            return __map[data_type.value]
         
         component = cls.empty()
         
-        if __data_type and component.type != __data_type:
-            raise TypeError(f"Mismatching types. Cannot create an instance of '{component.__class__.__name__}' from a dictionary with its property 'type' being '{__data_type}'. Expected type was '{component.type}'.")
+        if data_type and component.type.value != data_type.value:
+            raise TypeError(f"Mismatching types. Cannot create an instance of '{component.__class__.__name__}' from a dictionary with its property 'type' being '{data_type.value}'. Expected type was '{component.type.value}'.")
         
         component.update(**__data)
         return component
@@ -372,6 +382,32 @@ class AdaptiveCardAction(AdaptiveCardMaterial):
     @abstractmethod
     def empty() -> AdaptiveCardAction:
         pass
+    
+    @classmethod
+    def from_dict(cls, __data: dict) -> AdaptiveCardAction:
+        __data = __data.copy()
+        action_type = __data.pop("type", None)
+        action_type = ActionType._value2member_map_.get(action_type)
+        
+        if action_type is None:
+            raise TypeError(f"Invalid action type.")
+        
+        if cls.__name__=='AdaptiveCardAction':
+            subclasses = [sub.empty() for sub in AdaptiveCardAction.__subclasses__()]
+            
+            __map = {sub.type.value: sub for sub in subclasses}
+
+            __map[action_type.value].update(**__data)
+
+            return __map[action_type.value]
+        
+        component = cls.empty()
+        
+        if component.type.value != action_type.value:
+            raise TypeError(f"Mismatching types. Cannot create an instance of '{component.__class__.__name__}' from a dictionary with its property 'type' being '{action_type.value}'. Expected type was '{component.type.value}'.")
+        
+        component.update(**__data)
+        return component
 
 __all__ = [
     'MaterialType',

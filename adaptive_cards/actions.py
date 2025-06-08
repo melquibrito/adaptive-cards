@@ -5,6 +5,7 @@ from enum import Enum
 from .material import *
 from .adaptive_card import AdaptiveCard
 
+
 class MSTeams(MaterialMapping):
     def __init__(self, __type: str, **kwargs):
         super().__init__(type=__type, **kwargs)
@@ -32,7 +33,7 @@ class ActionData(MaterialMapping):
             **kwargs
         ):
 
-        super().__init__(msteams=msteams, **kwargs)
+        super().__init__(msTeams=msteams, **kwargs)
 
 class AssociatedInputs(Enum):
     AUTO = "auto"

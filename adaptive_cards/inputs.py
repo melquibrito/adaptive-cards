@@ -6,6 +6,7 @@ from enum import Enum
 
 from .material import *
 
+
 class InputValidation(MaterialMapping):
     def __init__(
             self,
@@ -62,23 +63,43 @@ class AdaptiveCardInput(AdaptiveCardMaterial, ABC):
     def empty() -> AdaptiveCardInput:
         pass
     
+    @classmethod
+    def from_dict(cls, __data: dict) -> AdaptiveCardInput:
+        __data = __data.copy()
+        input_type = __data.pop("type", None)
+        input_type = InputType._value2member_map_.get(input_type)
+
+        if input_type is None:
+            raise TypeError(f"Invalid input type.")
+        
+        if cls.__name__=='AdaptiveCardInput':
+            subclasses = [sub.empty() for sub in AdaptiveCardInput.__subclasses__()]
+            __map = {sub.type.value: sub for sub in subclasses}
+
+            __map[input_type.value].update(**__data)
+
+            return __map[input_type.value]
+        
+        component = cls.empty()
+        
+        if component.type.value != input_type.value:
+            raise TypeError(f"Mismatching types. Cannot create an instance of '{component.__class__.__name__}' from a dictionary with its property 'type' being '{input_type.value}'. Expected type was '{component.type.value}'.")
+        
+        component.update(**__data)
+        return component
+
 class ChoiceSetMode(Enum):
     UNSET = None
     COMPACT = "compact"
     EXPANDED = "expanded"
     FILTERED = "filtered"
 
-class InputChoice(AdaptiveCardMaterial):
-    def __init__(self, __title: str, value: Optional[str]=None):
+class InputChoice(MaterialMapping):
+    def __init__(self, title: str, value: Optional[str]=None):
         super().__init__(
-            MaterialType.INPUT_CHOICE,
-            title=__title, 
-            value=value or __title
+            title=title, 
+            value=value or title
         )
-
-    @staticmethod
-    def empty() -> InputChoice:
-        return InputChoice("")
 
 class InputChoiceSet(AdaptiveCardInput):
     def __init__(
@@ -131,6 +152,10 @@ class InputTextValidation(MaterialMapping):
             raise ValueError("Property 'error_message' cannot be empty or null when property 'required' is True.")
         
         super().__init__(isRequired=required, errorMessage=error_message, regex=pattern)
+    
+    @staticmethod
+    def required(error_message: str) -> InputTextValidation:
+        return InputTextValidation(required=True, error_message=error_message)
 
 class InputTextMode(Enum):
     UNSET = None
@@ -248,7 +273,7 @@ class InputTime(AdaptiveCardInput):
             visible: bool=True,
         ):
         super().__init__(
-            InputType.DATE,
+            InputType.TIME,
             id=id,
             label=label,
             value=value.strftime("%H:%M") if value else None,

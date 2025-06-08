@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from .material import *
 
+
 class AdaptiveCardLayout(MaterialMapping):
     def __init__(
             self,
@@ -19,12 +20,12 @@ class AdaptiveCardLayout(MaterialMapping):
 class AdaptiveCard(AdaptiveCardMaterial):
     def __init__(
             self,
-            body: List[AdaptiveCardMaterial],
+            body: List[AdaptiveCardMaterial]=[],
             actions: Optional[List[AdaptiveCardAction]]=None,
             select_action: Optional[AdaptiveCardAction]=None,
             layout: Optional[AdaptiveCardLayout]=None,
             background_image: Optional[BackgroundImage]=None,
-            version: float=1.6,
+            version: float=1.5,
             schema: Optional[str]=None,
             id: Optional[str]=None):
         

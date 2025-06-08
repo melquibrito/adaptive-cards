@@ -6,6 +6,7 @@ from .material import *
 from .actions import AdaptiveCardAction
 from .elements import Image, ImageSize
 
+
 class ContainerTheme(Enum):
     UNSET = None
     DEFAULT = "default"
@@ -148,7 +149,7 @@ class ColumnSetLayout(MaterialMapping):
 class ColumnSet(AdaptiveCardMaterial):
     def __init__(
             self,
-            columns: List[Column],
+            columns: List[Column]=[],
             layout: Optional[ColumnSetLayout]=None,
             style: Optional[ContainerStyle]=None,
             action: Optional[AdaptiveCardAction]=None,
@@ -184,13 +185,9 @@ class FactSetLayout(MaterialMapping):
             height=height
         )
 
-class Fact(AdaptiveCardMaterial):
+class Fact(MaterialMapping):
     def __init__(self, title: str, value: str):
-        super().__init__(MaterialType.FACT, title=title, value=value)
-    
-    @staticmethod
-    def empty() -> Fact:
-        return Fact("", "")
+        super().__init__(title=title, value=value)
 
 class FactSet(AdaptiveCardMaterial):
     def __init__(
@@ -349,7 +346,7 @@ class Table(AdaptiveCardMaterial):
         self.ensure_iterable_typing(rows, TableRow)
 
         if columns is None:
-            columns = len(max([r.get("cells") for r in rows], key=len))
+            columns = len(max([r.get("cells") for r in rows], key=len)) if rows else 1
 
         if isinstance(columns, int):
             columns = [dict(width=1) for _ in range(columns)]

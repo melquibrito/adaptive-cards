@@ -4,6 +4,7 @@ from enum import Enum
 
 from .material import *
 
+
 class TextTheme(Enum):
     UNSET = None
     DEFAULT = "default"
